@@ -34,8 +34,12 @@ class MemeItemsCollectionViewController: MemeItemsViewController, UICollectionVi
         showStaticViewerForMeme(memes[indexPath.item])
     }
 
+    // MARK: Implement Abstract Overrides
+    
+    //
+    // ask collectionview to reload data
+    //
     override func reloadMemes() {
-        println("reload collection memes")
         collectionView.reloadData()
     }
     

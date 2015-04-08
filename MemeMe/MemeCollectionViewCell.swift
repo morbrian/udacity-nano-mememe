@@ -8,6 +8,10 @@
 
 import UIKit
 
+//
+// MemeCollectionViewCell
+// represents cell of a collection view containing a single meme item.
+//
 class MemeCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
@@ -20,9 +24,4 @@ class MemeCollectionViewCell: UICollectionViewCell {
         }
     }
 
-    override func prepareForReuse() {
-        println("prepforview imageView \(imageView)")
-        println("prepforview meme \(meme)")
-        //imageView.image = meme.memedImage
-    }
 }

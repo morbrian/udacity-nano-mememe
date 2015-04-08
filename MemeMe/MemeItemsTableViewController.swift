@@ -34,10 +34,12 @@ class MemeItemsTableViewController: MemeItemsViewController, UITableViewDataSour
         showStaticViewerForMeme(memes[indexPath.item])
     }
     
-    //
+    // MARK: Implement Abstract Overrides
     
+    //
+    // ask table view to reload data
+    //
     override func reloadMemes() {
-        println("reload table memes")
         tableView.reloadData()
     }
     
