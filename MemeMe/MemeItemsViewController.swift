@@ -34,8 +34,11 @@ class MemeItemsViewController: UIViewController {
         navigationController?.pushViewController(singleMemeViewer, animated: true)
     }
     
-    //
+    // MARK: Abstract Methods
     
+    //
+    // subclasses should override to to perform appropriate actions when meme data needs to be reloaded.
+    //
     func reloadMemes() {
         fatalError("This method must be overridden")
     }
