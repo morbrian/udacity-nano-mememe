@@ -8,6 +8,10 @@
 
 import UIKit
 
+//
+// MemeItemsTableViewController
+// Displays memes in a table view.
+//
 class MemeItemsTableViewController: MemeItemsViewController, UITableViewDataSource, UITableViewDelegate  {
     
     @IBOutlet weak var tableView: UITableView!
@@ -15,11 +19,11 @@ class MemeItemsTableViewController: MemeItemsViewController, UITableViewDataSour
     // MARK: UITableViewDataSource
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return memes.count
+        return memes?.count ?? 0
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var meme = memes[indexPath.item]
+        var meme = memes?[indexPath.item]
         let cell = tableView.dequeueReusableCellWithIdentifier("MemeTableItem", forIndexPath: indexPath) as MemeTableViewCell
         cell.meme = meme
         return cell
@@ -27,8 +31,13 @@ class MemeItemsTableViewController: MemeItemsViewController, UITableViewDataSour
     
     // MARK: UITableViewDelegate
     
+    //
+    // On row selection, displays the static meme viewer containing the memed image.
+    //
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        showStaticViewerForMeme(memes[indexPath.item])
+        if let memes = memes {
+            showStaticViewerForMeme(memes[indexPath.item])
+        }
     }
     
     // MARK: Implement Abstract Overrides

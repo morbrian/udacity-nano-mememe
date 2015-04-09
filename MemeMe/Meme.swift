@@ -8,10 +8,15 @@
 
 import UIKit
 
+//
+// Data model for a Meme
+//
 class Meme: NSObject {
     var topText: String
     var bottomText: String
     var image: UIImage
+    
+    // memedImage is derived from other three required fields
     var memedImage: UIImage?
     
     init(topText: String, bottomText: String, image: UIImage) {
