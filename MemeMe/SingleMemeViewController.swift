@@ -39,13 +39,13 @@ class SingleMemeViewController: UIViewController {
                     animations: { self.toggleBackGroundColor(!navBarState) },
                     completion: nil)
             }
-            if let tabBarState = tabBarController?.tabBar.hidden {
+            if let tabBarController = tabBarController {
                 // animate tabbar hiding
                 // TODO: this ends up feeling choppy as the UIImageView jumps into position at the end.
                 UIView.transitionWithView(self.view,
                     duration: 0.35,
                     options: UIViewAnimationOptions.LayoutSubviews | UIViewAnimationOptions.CurveEaseIn,
-                    animations: { self.tabBarController!.tabBar.hidden = !tabBarState },
+                    animations: { tabBarController.tabBar.hidden = !tabBarController.tabBar.hidden },
                     completion: nil)
             }
         }

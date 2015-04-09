@@ -118,10 +118,14 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     // MARK: User Actions
     
     @IBAction func shareMeme(sender: UIBarButtonItem) {
-        meme?.memedImage = generateMemedImage()
-        var activityViewController = UIActivityViewController(activityItems: [meme!.memedImage!], applicationActivities: nil)
-        activityViewController.completionWithItemsHandler = completeSharingActivity
-        presentViewController(activityViewController, animated: true, completion: nil)
+        if let meme = meme {
+            meme.memedImage = generateMemedImage()
+            if let memedImage = meme.memedImage {
+                var activityViewController = UIActivityViewController(activityItems: [memedImage], applicationActivities: nil)
+                activityViewController.completionWithItemsHandler = completeSharingActivity
+                presentViewController(activityViewController, animated: true, completion: nil)
+            }
+        }
     }
     
     @IBAction func pickImageFromCamera(sender: UIBarButtonItem) {
@@ -257,11 +261,14 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     //
     private func updateModelFromDisplay() {
         if meme == nil && isMemeCreateable() {
+            // explicitly unwrapped imageView.image is verified as not nil by isMemeCreateable
             meme = Meme(topText: topTextField.text, bottomText: bottomTextField.text, image: imageView.image!)
         } else {
             meme?.topText = topTextField.text
             meme?.bottomText = bottomTextField.text
-            meme?.image = imageView.image!
+            if let image = imageView.image {
+                meme?.image = image
+            }
         }
     }
     
