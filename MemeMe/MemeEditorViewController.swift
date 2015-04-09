@@ -44,8 +44,9 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         }
     }
     
-    // reference to recently edited text field to help decide how to shift view position
-    private weak var lastTextFieldEdited: UITextField!
+    // true if the lasted edited field was the bottom field, 
+    // to help decided if we need to shift view when keyboard appears.
+    private var bottomFieldLastEdited: Bool = false
     
     // MARK: View Lifecycle
     
@@ -148,7 +149,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     // shift the entire view up if bottom text field being edited
     //
     func keyboardWillShow(notification: NSNotification) {
-        if bottomTextField.editing {
+        if bottomFieldLastEdited {
             self.view.bounds.origin.y += getKeyboardHeight(notification)
             toolbar.hidden = true
         }
@@ -158,11 +159,10 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     // if bottom textfield just completed editing, shift the view back down
     //
     func keyboardWillHide(notification: NSNotification) {
-        if bottomTextField == lastTextFieldEdited {
+        if bottomFieldLastEdited {
             view.bounds.origin.y -= getKeyboardHeight(notification)
             toolbar.hidden = false
         }
-        lastTextFieldEdited == nil
     }
     
     //
@@ -170,6 +170,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     // otherwise leave unmodified.
     //
     func textFieldDidBeginEditing(textField: UITextField) {
+        bottomFieldLastEdited = textField == bottomTextField
         let text = textField.text
         if text == DefaultTop || text == DefaultBottom {
             textField.text = ""
@@ -185,7 +186,6 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     // the keyboard hide event to decide if view needs to shift.
     //
     func textFieldShouldReturn(textField: UITextField) {
-        lastTextFieldEdited = textField
         textField.endEditing(false)
     }
     

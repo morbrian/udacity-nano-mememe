@@ -16,7 +16,6 @@ class MemeItemsCollectionViewController: MemeItemsViewController, UICollectionVi
     // MARK: UICollectionViewDataSource
  
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            println("collview memes count \(memes.count)")
             return memes.count
     }
     
