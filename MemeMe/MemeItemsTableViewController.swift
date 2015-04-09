@@ -20,11 +20,8 @@ class MemeItemsTableViewController: MemeItemsViewController, UITableViewDataSour
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var meme = memes[indexPath.item]
-        let cell = tableView.dequeueReusableCellWithIdentifier("MemeTableItem", forIndexPath: indexPath) as UITableViewCell
-        cell.textLabel!.text = meme.topText
-        cell.detailTextLabel!.text = meme.bottomText
-        cell.imageView!.image = meme.memedImage
-        
+        let cell = tableView.dequeueReusableCellWithIdentifier("MemeTableItem", forIndexPath: indexPath) as MemeTableViewCell
+        cell.meme = meme
         return cell
     }
     

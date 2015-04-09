@@ -14,14 +14,24 @@ import UIKit
 //
 class MemeCollectionViewCell: UICollectionViewCell {
     
-    @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var imageView: UIImageView?
+    @IBOutlet weak var topLabel: UILabel?
+    @IBOutlet weak var bottomLabel: UILabel?
     
     var meme: Meme? {
         didSet {
             if let meme = meme {
-                imageView.image = meme.memedImage
+                if let imageView = imageView {
+                    imageView.image = meme.image
+                }
+                if let topLabel = topLabel {
+                    topLabel.text = meme.topText
+                }
+                if let bottomLabel = bottomLabel {
+                    bottomLabel.text = meme.bottomText
+                }
             }
         }
     }
-
+    
 }
