@@ -8,6 +8,15 @@
 
 import UIKit
 
+//
+// MemeEditorViewController
+// By far the most complex class of the application.
+// Displays two editable text fields.
+// Lets the user choose an image from the Camera or Photo Library
+// Image is displayed full screen, and may be zoomed an panned behind the text.
+// Share button permits user to post the image via device installed apps.
+// Once Share is tapped, even tapping cancel will save the Meme in the list of memes.
+//
 class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate {
     
     // MARK: Class Constants
@@ -35,6 +44,8 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         }
     }
     
+    // both private views set in viewDidLoad rather than storyboard
+    // because it is simpler to configure these in code.
     private var scrollView: UIScrollView!
     private var imageView: UIImageView!
     

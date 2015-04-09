@@ -8,6 +8,10 @@
 
 import UIKit
 
+//
+// MemeItemsCollectionViewController
+// Displays Meme data in a tiled collection view.
+//
 class MemeItemsCollectionViewController: MemeItemsViewController, UICollectionViewDataSource, UICollectionViewDelegate {
   
     
@@ -16,21 +20,25 @@ class MemeItemsCollectionViewController: MemeItemsViewController, UICollectionVi
     // MARK: UICollectionViewDataSource
  
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            return memes.count
+            return memes?.count ?? 0
     }
     
     func collectionView(collectionView: UICollectionView,
         cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("MemeCollectionItem", forIndexPath: indexPath) as MemeCollectionViewCell
-            cell.meme = memes[indexPath.item]
+            cell.meme = memes?[indexPath.item]
             return cell
     }
     
     // MARK: UICollectionViewDelegate
     
-    func collectionView(collectionView: UICollectionView,
-        didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        showStaticViewerForMeme(memes[indexPath.item])
+    //
+    // On cell selection displays the static meme viewer.
+    //
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        if let memes = memes {
+            showStaticViewerForMeme(memes[indexPath.item])
+        }
     }
 
     // MARK: Implement Abstract Overrides

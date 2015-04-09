@@ -8,9 +8,14 @@
 
 import UIKit
 
+//
+// MemeItemsViewController
+// Abstract Base class for our Meme Items controllers.
+// Sub classses MUST override reloadMemes()
+//
 class MemeItemsViewController: UIViewController {
     
-    var memes: [Meme]!
+    var memes: [Meme]?
     
     // MARK: View Lifecycle
     
@@ -28,6 +33,10 @@ class MemeItemsViewController: UIViewController {
     
     // MARK: Helpers
     
+    //
+    // Instantiate viewcontroller with ID = MemeStaticViewer from storyboard.
+    // Push with navigation controller to display.
+    //
     func showStaticViewerForMeme(meme: Meme) {
         var singleMemeViewer = storyboard?.instantiateViewControllerWithIdentifier("MemeStaticViewer") as SingleMemeViewController
         singleMemeViewer.meme = meme

@@ -11,15 +11,16 @@ import UIKit
 //
 // SingleMemeViewController simply associates the meme object data
 // with an ImageView for displayint the memed image.
+// Supports tap gesture which will hide navbar and toolbar for full screen view.
 //
 class SingleMemeViewController: UIViewController {
     
     @IBOutlet weak var imageView: UIImageView!
    
-    var meme: Meme!
+    var meme: Meme?
     
     override func viewDidLoad() {
-        imageView.image = meme.memedImage
+        imageView.image = meme?.memedImage
         let tapRecognizer = UITapGestureRecognizer(target: self, action: "handleTap:")
         view.addGestureRecognizer(tapRecognizer)
     }
