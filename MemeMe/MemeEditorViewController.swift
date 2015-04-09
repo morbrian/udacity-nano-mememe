@@ -20,7 +20,6 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         NSForegroundColorAttributeName : UIColor.whiteColor(),
         NSFontAttributeName : UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
         NSStrokeWidthAttributeName : CGFloat(-3.0)
-        
     ]
 
     // MARK: Outlets and Properties
