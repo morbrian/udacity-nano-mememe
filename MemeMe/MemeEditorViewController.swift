@@ -118,7 +118,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     // MARK: User Actions
     
     @IBAction func shareMeme(sender: UIBarButtonItem) {
-        if let meme = meme {
+        if let var meme = meme {
             meme.memedImage = generateMemedImage()
             if let memedImage = meme.memedImage {
                 var activityViewController = UIActivityViewController(activityItems: [memedImage], applicationActivities: nil)

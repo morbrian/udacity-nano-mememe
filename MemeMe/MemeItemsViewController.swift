@@ -16,6 +16,7 @@ import UIKit
 class MemeItemsViewController: UIViewController {
     
     var memes: [Meme]?
+    var shouldSegueToEditor = false
     
     // MARK: View Lifecycle
     
@@ -24,7 +25,7 @@ class MemeItemsViewController: UIViewController {
         reloadMemesFromSource()
         if let count = memes?.count {
             if count == 0 {
-                performSegueWithIdentifier("MemeEditorSegue", sender: self)
+                shouldSegueToEditor = true
             }
         }
     }
@@ -33,6 +34,13 @@ class MemeItemsViewController: UIViewController {
         super.viewWillAppear(animated)
         reloadMemesFromSource()
         reloadMemes()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        if shouldSegueToEditor {
+            shouldSegueToEditor = false
+            performSegueWithIdentifier("MemeEditorSegue", sender: self)
+        }
     }
     
     // MARK: Helpers
