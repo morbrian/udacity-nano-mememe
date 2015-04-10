@@ -33,7 +33,7 @@ class SingleMemeViewController: UIViewController {
         if let meme = meme {
             let object = UIApplication.sharedApplication().delegate
             let appDelegate = object as AppDelegate
-            if find(appDelegate.memes, meme) == nil {
+            if !contains(appDelegate.memes, meme) {
                 navigationController?.popViewControllerAnimated(true)
             }
         }
