@@ -16,7 +16,10 @@ import UIKit
 class MemeItemsViewController: UIViewController {
     
     var memes: [Meme]?
-    var shouldSegueToEditor = false
+    
+    // we only want to force the editor to show if the app opens to an empty list,
+    // after the user browses around, cancels or deletes all items, we let them see the empty list.
+    private var shouldSegueToEditor = false
     
     // MARK: View Lifecycle
     
