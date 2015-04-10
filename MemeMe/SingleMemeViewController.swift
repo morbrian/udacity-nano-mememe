@@ -16,14 +16,39 @@ import UIKit
 class SingleMemeViewController: UIViewController {
     
     @IBOutlet weak var imageView: UIImageView!
-   
+  
     var meme: Meme?
     
     override func viewDidLoad() {
         imageView.image = meme?.memedImage
         let tapRecognizer = UITapGestureRecognizer(target: self, action: "handleTap:")
         view.addGestureRecognizer(tapRecognizer)
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteMemeAction:")
     }
+    
+    override func viewWillAppear(animated: Bool) {
+        // if the meme we are showing has been deleted since we last appeared,
+        // we want to pop the display instead of showing the meme
+        if let meme = meme {
+            let object = UIApplication.sharedApplication().delegate
+            let appDelegate = object as AppDelegate
+            if find(appDelegate.memes, meme) == nil {
+                navigationController?.popViewControllerAnimated(true)
+            }
+        }
+    }
+    
+    // MARK: Actions
+    
+    func deleteMemeAction(sender: AnyObject!) {
+        if let meme  = meme {
+            deleteMeme(meme)
+        }
+        navigationController?.popViewControllerAnimated(true)
+    }
+    
+    // MARK: Gestures
     
     //
     // When a user taps the view, hide the navigation bar and tabbar and animate background color change.
@@ -54,4 +79,13 @@ class SingleMemeViewController: UIViewController {
     private func toggleBackGroundColor(state: Bool) {
         view.backgroundColor = state ? UIColor.blackColor() : UIColor.whiteColor()
     }
+    
+    private func deleteMeme(meme: Meme) {
+        let object = UIApplication.sharedApplication().delegate
+        let appDelegate = object as AppDelegate
+        if let index = find(appDelegate.memes, meme) {
+            appDelegate.memes.removeAtIndex(index)
+        }
+    }
+    
 }
