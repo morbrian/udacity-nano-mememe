@@ -234,7 +234,7 @@
                     <navigationItem key="navigationItem" title="Sent Memes" id="mAl-R5-xUM">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="ryH-e7-iS5">
                             <connections>
-                                <segue destination="3hl-po-fgb" kind="presentation" id="Zdu-JJ-m0Q"/>
+                                <segue destination="3hl-po-fgb" kind="presentation" identifier="MemeEditorSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="Zdu-JJ-m0Q"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
