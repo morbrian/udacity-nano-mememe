@@ -21,13 +21,17 @@ class MemeItemsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        reloadMemesFromSource()
+        if let count = memes?.count {
+            if count == 0 {
+                performSegueWithIdentifier("MemeEditorSegue", sender: self)
+            }
+        }
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        let object = UIApplication.sharedApplication().delegate
-        let appDelegate = object as AppDelegate
-        memes = appDelegate.memes
+        reloadMemesFromSource()
         reloadMemes()
     }
     
@@ -41,6 +45,12 @@ class MemeItemsViewController: UIViewController {
         var singleMemeViewer = storyboard?.instantiateViewControllerWithIdentifier("MemeStaticViewer") as SingleMemeViewController
         singleMemeViewer.meme = meme
         navigationController?.pushViewController(singleMemeViewer, animated: true)
+    }
+    
+    private func reloadMemesFromSource() {
+        let object = UIApplication.sharedApplication().delegate
+        let appDelegate = object as AppDelegate
+        memes = appDelegate.memes
     }
     
     // MARK: Abstract Methods
