@@ -10,7 +10,6 @@ import UIKit
 
 //
 // MemeEditorViewController
-// By far the most complex class of the application.
 // Displays two editable text fields.
 // Lets the user choose an image from the Camera or Photo Library
 // Image is displayed full screen, and may be zoomed an panned behind the text.
@@ -147,7 +146,6 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     //
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
         setZoomParametersForSize(scrollView.bounds.size)
-        recenterImage()
     }
     
     //
@@ -155,7 +153,13 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     //
     override func viewWillLayoutSubviews() {
         setZoomParametersForSize(scrollView.bounds.size)
-        recenterImage()
+        
+        // after views layout, center on the image.
+        // this happens after picking an image and after device rotation.
+        var imageViewSize = imageView.bounds.size
+        let upperLeftCornerX = (imageViewSize.width * scrollView.zoomScale) / 2.0  - scrollView.bounds.size.width / 2.0
+        let upperLeftCornerY = (imageViewSize.height * scrollView.zoomScale) / 2.0 - scrollView.bounds.size.height / 2.0
+        scrollView.bounds.origin = CGPoint(x: upperLeftCornerX, y: upperLeftCornerY)
     }
     
     // MARK: TextField and Keyboard Handlers
@@ -214,7 +218,13 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     }
     
     func scrollViewDidZoom(scrollView: UIScrollView) {
-        recenterImage()
+        // while scrolling beyond the limits of the image, we like to keep it centered
+        // so we adjust the insets.
+        let scrollViewSize = scrollView.bounds.size
+        let imageSize = imageView.frame.size
+        let horizontalSpace = imageSize.width < scrollViewSize.width ? (scrollViewSize.width - imageSize.width) / 2 : 0
+        let verticalSpace = imageSize.height < scrollViewSize.height ? (scrollViewSize.height - imageSize.height) / 2 : 0
+        scrollView.contentInset = UIEdgeInsets(top: verticalSpace, left: horizontalSpace, bottom: verticalSpace, right: horizontalSpace)
     }
     
     // MARK: UIImagePickerControllerDelegate
@@ -223,13 +233,11 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     // set picked image and dismiss picker after user chooses image from source.
     //
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
-        
         imageView.image = image
         imageView.sizeToFit()
         imageView.frame.origin = CGPoint(x: 0.0, y: 0.0)
         scrollView.contentSize = imageView.bounds.size
         setZoomParametersForSize(scrollView.bounds.size)
-        recenterImage()
         updateModelFromDisplay()
         picker.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -296,23 +304,6 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     }
     
     //
-    // center the image. if the user has zoomed out past the height or width of the image,
-    // then scale it back so there is no margin on any side of the image.
-    //
-    // Reference: rawwenderlich.com
-    //
-    private func recenterImage() {
-        let scrollViewSize = scrollView.bounds.size
-        let imageSize = imageView.frame.size
-        
-        let horizontalSpace = imageSize.width < scrollViewSize.width ? (scrollViewSize.width - imageSize.width) / 2 : 0
-        let verticalSpace = imageSize.height < scrollViewSize.height ? (scrollViewSize.height - imageSize.height) / 2 : 0
-        
-        scrollView.contentInset = UIEdgeInsets(top: verticalSpace, left: horizontalSpace, bottom: verticalSpace, right: horizontalSpace)
-        
-    }
-    
-    //
     // configure zoom scales so that the content is restricted from zooming
     // beyond the point that would allow empty space on any side.
     //
@@ -322,13 +313,12 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         let imageSize = imageView.bounds.size
         let widthScale = scrollViewSize.width / imageSize.width
         let heightScale = scrollViewSize.height / imageSize.height
+        // we get max of width or height so we always fill the screen
         let minScale = max(widthScale, heightScale)
         
         scrollView.minimumZoomScale = minScale
         scrollView.maximumZoomScale = 1.0
         scrollView.zoomScale = minScale
-        
-        recenterImage()
     }
     
     //

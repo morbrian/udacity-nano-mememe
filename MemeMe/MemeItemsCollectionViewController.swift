@@ -54,6 +54,13 @@ class MemeItemsCollectionViewController: MemeItemsViewController, UICollectionVi
     
     override func editModeChanged() {
         collectionView?.allowsMultipleSelection = editMode
+        if (!editMode) {
+            let indexPaths = collectionView.indexPathsForSelectedItems()
+            for indexPath in indexPaths {
+                collectionView.deselectItemAtIndexPath(indexPath as? NSIndexPath, animated: true)
+            }
+            
+        }
     }
     
     override func selectedMemes() -> [Meme] {
