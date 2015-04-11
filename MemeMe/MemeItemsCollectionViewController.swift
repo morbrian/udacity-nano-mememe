@@ -16,7 +16,7 @@ class MemeItemsCollectionViewController: MemeItemsViewController, UICollectionVi
   
     
     @IBOutlet weak var collectionView: UICollectionView!
-    
+
     // MARK: UICollectionViewDataSource
  
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -36,18 +36,27 @@ class MemeItemsCollectionViewController: MemeItemsViewController, UICollectionVi
     // On cell selection displays the static meme viewer.
     //
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        if let memes = memes {
-            showStaticViewerForMeme(memes[indexPath.item])
-        }
+         handleSelectionEventForMemeAtIndex(indexPath.item)
     }
-
+    
+    func collectionView(collectionView: UICollectionView, didDeselectItemAtIndexPath indexPath: NSIndexPath) {
+        handleDeselectionEventForMemeAtIndex(indexPath.item)
+    }
+    
     // MARK: Implement Abstract Overrides
     
     //
     // ask collectionview to reload data
     //
-    override func reloadMemes() {
+    override func refreshMemesDisplay() {
         collectionView.reloadData()
     }
     
+    override func editModeChanged() {
+        collectionView?.allowsMultipleSelection = editMode
+    }
+    
+    override func selectedMemes() -> [Meme] {
+        return memesAtPaths(collectionView.indexPathsForSelectedItems() as? [NSIndexPath])
+    }
 }

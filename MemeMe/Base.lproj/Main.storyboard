@@ -53,7 +53,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="100" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="ciG-zd-vtY">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="100" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="ciG-zd-vtY">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -132,20 +132,15 @@
                             </mask>
                         </variation>
                     </view>
-                    <navigationItem key="navigationItem" title="Sent Memes" id="TGk-0d-ZVs">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="o5i-pD-jgT">
-                            <connections>
-                                <segue destination="3hl-po-fgb" kind="presentation" identifier="MemeEditorSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="3hY-ri-6qn"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Sent Memes" id="TGk-0d-ZVs"/>
                     <connections>
                         <outlet property="tableView" destination="ciG-zd-vtY" id="XG7-OR-8Be"/>
+                        <segue destination="3hl-po-fgb" kind="presentation" identifier="MemeEditorSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="E1P-tp-P0o"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ePX-QY-Qqp" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1489" y="-258"/>
+            <point key="canvasLocation" x="1656" y="-203"/>
         </scene>
         <!--Sent Memes-->
         <scene sceneID="opz-zC-wpZ">
@@ -195,6 +190,9 @@
                                                     <color key="shadowColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <size key="shadowOffset" width="0.0" height="0.0"/>
                                                 </label>
+                                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="checkmark" highlightedImage="checkmark" translatesAutoresizingMaskIntoConstraints="NO" id="oUB-4T-ZBa">
+                                                    <rect key="frame" x="72" y="72" width="20" height="20"/>
+                                                </imageView>
                                             </subviews>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         </view>
@@ -213,6 +211,7 @@
                                         <connections>
                                             <outlet property="bottomLabel" destination="j18-LJ-QYL" id="VNi-RI-SDg"/>
                                             <outlet property="imageView" destination="L7R-eY-3ts" id="kG1-I3-VHz"/>
+                                            <outlet property="selectionImage" destination="oUB-4T-ZBa" id="2lz-2i-qZv"/>
                                             <outlet property="topLabel" destination="hkR-uL-Tz7" id="lJ0-NE-Ize"/>
                                         </connections>
                                     </collectionViewCell>
@@ -231,20 +230,15 @@
                             <constraint firstItem="m4M-HY-5dY" firstAttribute="top" secondItem="9cl-C1-OSa" secondAttribute="topMargin" id="pe8-Rb-Axj"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="Sent Memes" id="mAl-R5-xUM">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="ryH-e7-iS5">
-                            <connections>
-                                <segue destination="3hl-po-fgb" kind="presentation" identifier="MemeEditorSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="Zdu-JJ-m0Q"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Sent Memes" id="mAl-R5-xUM"/>
                     <connections>
                         <outlet property="collectionView" destination="m4M-HY-5dY" id="ztI-d0-X0d"/>
+                        <segue destination="3hl-po-fgb" kind="presentation" identifier="MemeEditorSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="ZAu-Up-SQe"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6tU-YC-McC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1765" y="527"/>
+            <point key="canvasLocation" x="1489" y="514"/>
         </scene>
         <!--Meme Editor View Controller-->
         <scene sceneID="LjJ-Mj-MwV">
@@ -485,8 +479,9 @@
     <resources>
         <image name="Collection" width="30" height="30"/>
         <image name="Table" width="30" height="30"/>
+        <image name="checkmark" width="490" height="490"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Zdu-JJ-m0Q"/>
+        <segue reference="E1P-tp-P0o"/>
     </inferredMetricsTieBreakers>
 </document>

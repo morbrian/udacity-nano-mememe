@@ -24,7 +24,7 @@ class MemeItemsTableViewController: MemeItemsViewController, UITableViewDataSour
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var meme = memes?[indexPath.item]
-        let cell = tableView.dequeueReusableCellWithIdentifier("MemeTableItem", forIndexPath: indexPath) as MemeTableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier("MemeTableItem", forIndexPath: indexPath) as MemeTableViewCell        
         cell.meme = meme
         return cell
     }
@@ -35,9 +35,16 @@ class MemeItemsTableViewController: MemeItemsViewController, UITableViewDataSour
     // On row selection, displays the static meme viewer containing the memed image.
     //
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if let memes = memes {
-            showStaticViewerForMeme(memes[indexPath.item])
+        if let cell = tableView.cellForRowAtIndexPath(indexPath) as? MemeTableViewCell {
+            // the selection may have changed the imageview background, 
+            // we change it back because we think this makes the table look more balanced.
+            cell.memeImageView?.backgroundColor = cell.originallyConfiguredColor
         }
+        handleSelectionEventForMemeAtIndex(indexPath.item)
+    }
+    
+    func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
+        handleDeselectionEventForMemeAtIndex(indexPath.item)
     }
     
     // MARK: Implement Abstract Overrides
@@ -45,8 +52,19 @@ class MemeItemsTableViewController: MemeItemsViewController, UITableViewDataSour
     //
     // ask table view to reload data
     //
-    override func reloadMemes() {
+    override func refreshMemesDisplay() {
         tableView.reloadData()
     }
     
+    override func editModeChanged() {
+        if let tableView = tableView {
+            tableView.allowsMultipleSelection = editMode
+            tableView.editing = editMode
+        }
+    }
+    
+    override func selectedMemes() -> [Meme] {
+        return memesAtPaths(tableView.indexPathsForSelectedRows() as? [NSIndexPath])
+    }
+ 
 }

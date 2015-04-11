@@ -40,7 +40,7 @@ class SingleMemeViewController: UIViewController {
     }
     
     // MARK: Actions
-    
+
     func deleteMemeAction(sender: AnyObject!) {
         if let meme  = meme {
             deleteMeme(meme)

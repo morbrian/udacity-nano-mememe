@@ -17,6 +17,7 @@ class MemeCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView?
     @IBOutlet weak var topLabel: UILabel?
     @IBOutlet weak var bottomLabel: UILabel?
+    @IBOutlet weak var selectionImage: UIImageView?
     
     var meme: Meme? {
         didSet {
@@ -30,8 +31,15 @@ class MemeCollectionViewCell: UICollectionViewCell {
                 if let bottomLabel = bottomLabel {
                     bottomLabel.text = meme.bottomText
                 }
+                
             }
         }
     }
     
+    override var selected: Bool {
+        didSet {
+            selectionImage?.hidden = !selected
+        }
+    }
+        
 }
