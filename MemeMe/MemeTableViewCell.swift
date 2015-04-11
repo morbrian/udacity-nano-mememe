@@ -14,8 +14,26 @@ import UIKit
 //
 class MemeTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var memeImageView: UIImageView?
     @IBOutlet weak var memeLabel: UILabel?
+    @IBOutlet weak var memeImageView: UIImageView? {
+        didSet {
+            // the first time we get loaded we remember any backgroundColor
+            // we might have configured in IB.
+            if storeColorChange {
+                originallyConfiguredColor = memeImageView?.backgroundColor
+            }
+        }
+    }
+    
+    // the background color originally configured in IB.
+    var originallyConfiguredColor: UIColor? {
+        didSet {
+            storeColorChange = false
+        }
+    }
+    
+    // whether or not to remember color changes to the UIIMageView background.
+    private var storeColorChange = true
     
     var meme: Meme? {
         didSet {
@@ -26,7 +44,8 @@ class MemeTableViewCell: UITableViewCell {
                 if let memeLabel = memeLabel {
                     memeLabel.text = "\(meme.topText) \(meme.bottomText)"
                 }
+                
             }
         }
-    }
+    }    
 }
