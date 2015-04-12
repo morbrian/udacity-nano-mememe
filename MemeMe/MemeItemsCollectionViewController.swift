@@ -24,7 +24,7 @@ class MemeItemsCollectionViewController: MemeItemsViewController, UICollectionVi
     
     func collectionView(collectionView: UICollectionView,
         cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("MemeCollectionItem", forIndexPath: indexPath) as MemeCollectionViewCell
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("MemeCollectionItem", forIndexPath: indexPath) as! MemeCollectionViewCell
             cell.meme = memes?[indexPath.item]
             return cell
     }
