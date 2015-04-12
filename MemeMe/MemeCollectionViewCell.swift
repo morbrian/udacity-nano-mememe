@@ -22,16 +22,9 @@ class MemeCollectionViewCell: UICollectionViewCell {
     var meme: Meme? {
         didSet {
             if let meme = meme {
-                if let imageView = imageView {
-                    imageView.image = meme.image
-                }
-                if let topLabel = topLabel {
-                    topLabel.text = meme.topText
-                }
-                if let bottomLabel = bottomLabel {
-                    bottomLabel.text = meme.bottomText
-                }
-                
+                imageView?.image = meme.image
+                topLabel?.text = meme.topText
+                bottomLabel?.text = meme.bottomText
             }
         }
     }
