@@ -37,9 +37,9 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     @IBOutlet weak var navbar: UINavigationBar!
     @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var cameraButton: UIBarButtonItem!
-    @IBOutlet weak var shareButton: UIBarButtonItem! {
+    @IBOutlet weak var shareButton: UIBarButtonItem? {
         didSet {
-            shareButton.enabled = isSharingEnabled()
+            shareButton?.enabled = isSharingEnabled()
         }
     }
     
@@ -50,7 +50,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     
     var meme: Meme? {
         didSet {
-            shareButton.enabled = isSharingEnabled()
+            shareButton?.enabled = isSharingEnabled()
         }
     }
     
@@ -84,6 +84,8 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         
         scrollView.delegate = self
         
+        shareButton?.enabled = isSharingEnabled()
+        
         // copy model or set default values for user inputs
         initializeDisplay()
     }
@@ -91,8 +93,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         updateDisplayFromModel()
-        
-        scrollView.contentSize = imageView.bounds.size
+        layoutImageView()
         
         // disable camera button if not available, such as in simulator
         cameraButton.enabled = UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera)
@@ -234,12 +235,16 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     //
     func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
         imageView.image = image
+        layoutImageView()
+        updateModelFromDisplay()
+        picker.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func layoutImageView() {
         imageView.sizeToFit()
         imageView.frame.origin = CGPoint(x: 0.0, y: 0.0)
         scrollView.contentSize = imageView.bounds.size
         setZoomParametersForSize(scrollView.bounds.size)
-        updateModelFromDisplay()
-        picker.dismissViewControllerAnimated(true, completion: nil)
     }
     
     // MARK: Private Helpers
@@ -374,7 +379,12 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         if let meme = self.meme {
             let object = UIApplication.sharedApplication().delegate
             let appDelegate = object as AppDelegate
-            appDelegate.memes.append(meme)
+            if let index = find(appDelegate.memes, meme) {
+                appDelegate.memes.replaceRange(index...index, with: [meme])
+            } else {
+                appDelegate.memes.append(meme)
+            }
+            
         }
     }
     

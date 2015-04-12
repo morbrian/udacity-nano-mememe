@@ -20,14 +20,15 @@ class SingleMemeViewController: UIViewController {
     var meme: Meme?
     
     override func viewDidLoad() {
-        imageView.image = meme?.memedImage
         let tapRecognizer = UITapGestureRecognizer(target: self, action: "handleTap:")
         view.addGestureRecognizer(tapRecognizer)
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Trash, target: self, action: "deleteMemeAction:")
+        navigationItem.rightBarButtonItems?.append(UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Edit, target: self, action: "editMemeAction:"))
     }
     
     override func viewWillAppear(animated: Bool) {
+        imageView.image = meme?.memedImage
         // if the meme we are showing has been deleted since we last appeared,
         // we want to pop the display instead of showing the meme
         if let meme = meme {
@@ -46,6 +47,16 @@ class SingleMemeViewController: UIViewController {
             deleteMeme(meme)
         }
         navigationController?.popViewControllerAnimated(true)
+    }
+    
+    func editMemeAction(sender: AnyObject) {
+        performSegueWithIdentifier("MemeEditorSegue", sender: self)
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if let editorVC = segue.destinationViewController as? MemeEditorViewController {
+            editorVC.meme = meme
+        }
     }
     
     // MARK: Gestures
