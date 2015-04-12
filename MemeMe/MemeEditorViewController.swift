@@ -119,6 +119,7 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     @IBAction func shareMeme(sender: UIBarButtonItem) {
         if let var meme = meme {
             meme.memedImage = generateMemedImage()
+            meme.scaledAndCroppedImage = generateMemedImage(hideText: true)
             if let memedImage = meme.memedImage {
                 var activityViewController = UIActivityViewController(activityItems: [memedImage], applicationActivities: nil)
                 activityViewController.completionWithItemsHandler = completeSharingActivity
@@ -263,12 +264,16 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     
     // generate an image from the current view which is expected to be
     // the meme text overlayed on the image backgroud.
-    private func generateMemedImage() -> UIImage {
+    private func generateMemedImage(hideText: Bool = false) -> UIImage {
         let savedNavBarState = navigationController?.navigationBarHidden
         navigationController?.navigationBarHidden = true
         
         toolbar.hidden = true
         navbar.hidden = true
+        if hideText {
+            topTextField.hidden = true
+            bottomTextField.hidden = true
+        }
         
         UIGraphicsBeginImageContext(self.view.frame.size)
         self.view.drawViewHierarchyInRect(self.view.frame, afterScreenUpdates: true)
@@ -277,6 +282,10 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         
         toolbar.hidden = false
         navbar.hidden = false
+        if hideText {
+            topTextField.hidden = false
+            bottomTextField.hidden = false
+        }
         
         return memedImage
     }
@@ -297,7 +306,6 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         if let meme = self.meme {
             let object = UIApplication.sharedApplication().delegate
             let appDelegate = object as! AppDelegate
-
             if let index = find(appDelegate.memes, meme) {
                 appDelegate.memes.replaceRange(index...index, with: [meme])
             } else {

@@ -22,7 +22,7 @@ class MemeCollectionViewCell: UICollectionViewCell {
     var meme: Meme? {
         didSet {
             if let meme = meme {
-                imageView?.image = meme.image
+                imageView?.image = meme.scaledAndCroppedImage ?? meme.image
                 topLabel?.text = meme.topText
                 bottomLabel?.text = meme.bottomText
             }
