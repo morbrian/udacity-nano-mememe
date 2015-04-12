@@ -11,6 +11,7 @@ This intro document describes my implementation of the application and highlight
 * [Meme Table View](#meme-table-view)
 * [Meme Collection View](#meme-collection-view)
 * [Single Meme Viewer](#single-meme-viewer)
+* [Known Issues](#known-issues)
 
 ## App Launch
 
@@ -51,6 +52,13 @@ This view is displayed after tapping a Meme item in the collection or table view
 * Tap Trash button to delete image.
 * Tap Edit to transition to Meme Editor for editing the Meme data.
 * Tap Sent Memes to return to the previous Meme list view.
+
+## Known Issues
+
+There are two features of the app which I was not able to completely address.  Both are due to my experimentation with UIScrollView, and neither interferes with the base level project requirements.
+
+* Pinch-to-zoom or swipe-to-pan in Meme Editor does not work if the gesture begins on the UITextFields instead of on the background.
+* Transitioning to the Meme Editor from an existing Meme will show the default centered full image view rather than reproduce the zoomed in or panned version that may have been set when the Meme was saved.
 
 ## References
 
