@@ -16,6 +16,7 @@ class Meme: NSObject {
     var bottomText: String
     var image: UIImage
     var memedImage: UIImage?
+    var scaledAndCroppedImage: UIImage?
     
     init(topText: String, bottomText: String, image: UIImage) {
         self.topText = topText
