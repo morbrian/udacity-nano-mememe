@@ -14,12 +14,11 @@ import UIKit
 // Lets the user choose an image from the Camera or Photo Library
 // Image is displayed full screen, and may be zoomed an panned behind the text.
 // Share button permits user to post the image via device installed apps.
-// Once Share is tapped, even tapping cancel will save the Meme in the list of memes.
 //
 class MemeEditorViewController: UIViewController, UINavigationControllerDelegate {
     
     // MARK: Class Constants
-    // FIX: class properties not yet supported in Swift, fix code when Swift supports.
+    // FIX: class properties not yet supported in Swift, update code when Swift supports.
     
     private let DefaultTop = "TOP"
     private let DefaultBottom = "BOTTOM"
@@ -142,25 +141,15 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     
     // MARK: UIViewController Display Handling
     
-    //
     // adjust zoom limites after device rotation
-    //
     override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
         setZoomParametersForSize(scrollView.bounds.size)
     }
     
-    //
     // readjust zoom scale limits as necessary and recenter image as necessary
-    //
     override func viewWillLayoutSubviews() {
         setZoomParametersForSize(scrollView.bounds.size)
-        
-        // after views layout, center on the image.
-        // this happens after picking an image and after device rotation.
-        var imageViewSize = imageView.bounds.size
-        let upperLeftCornerX = (imageViewSize.width * scrollView.zoomScale) / 2.0  - scrollView.bounds.size.width / 2.0
-        let upperLeftCornerY = (imageViewSize.height * scrollView.zoomScale) / 2.0 - scrollView.bounds.size.height / 2.0
-        scrollView.bounds.origin = CGPoint(x: upperLeftCornerX, y: upperLeftCornerY)
+        recenterWithScrollViewOrigin()
     }
     
     // adjust the image size for the current view size
@@ -169,6 +158,15 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         imageView.frame.origin = CGPoint(x: 0.0, y: 0.0)
         scrollView.contentSize = imageView.bounds.size
         setZoomParametersForSize(scrollView.bounds.size)
+    }
+    
+    func recenterWithScrollViewOrigin() {
+        // after views layout, center on the image.
+        // this happens after picking an image and after device rotation.
+        var imageViewSize = imageView.bounds.size
+        let upperLeftCornerX = (imageViewSize.width * scrollView.zoomScale) / 2.0  - scrollView.bounds.size.width / 2.0
+        let upperLeftCornerY = (imageViewSize.height * scrollView.zoomScale) / 2.0 - scrollView.bounds.size.height / 2.0
+        scrollView.bounds.origin = CGPoint(x: upperLeftCornerX, y: upperLeftCornerY)
     }
     
     // MARK: Keyboard Handlers
@@ -299,6 +297,7 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         if let meme = self.meme {
             let object = UIApplication.sharedApplication().delegate
             let appDelegate = object as! AppDelegate
+
             if let index = find(appDelegate.memes, meme) {
                 appDelegate.memes.replaceRange(index...index, with: [meme])
             } else {
@@ -310,9 +309,11 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     
     // when sharing activity completes save meme then dismiss this editor,
     // returning to previous view on navigation stack.
-    private func completeSharingActivity(String!, Bool, [AnyObject]!, NSError!) {
-        saveMeme()
-        dismissViewControllerAnimated(true, completion: nil)
+    private func completeSharingActivity(activityType: String!, completed: Bool, returnedItems: [AnyObject]!, activityError: NSError!) {
+        if completed {
+            saveMeme()
+            dismissViewControllerAnimated(true, completion: nil)
+        }
     }
     
 }
@@ -322,9 +323,11 @@ extension MemeEditorViewController: UIImagePickerControllerDelegate {
 
     // set picked image and dismiss picker after user chooses image from source.
     func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
-        imageView.image = image
-        layoutImageView()
-        updateModelFromDisplay()
+        if let image = image {
+            imageView.image = image
+            layoutImageView()
+            updateModelFromDisplay()
+        }
         picker.dismissViewControllerAnimated(true, completion: nil)
     }
 }

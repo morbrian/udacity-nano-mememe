@@ -16,6 +16,12 @@ import UIKit
 // MARK: - MemeItemsViewController
 class MemeItemsViewController: UIViewController {
     
+    let CollectionCellsPerRowLandscape = 5
+    let CollectionCellsPerRowPortrait = 3
+    
+    // CODE: set as 2 in IB, not sure how to reference that value in code, so keep this in sync
+    let CollectionCellSpacing = 2
+    
     // MARK: Outlets and Properties
     
     @IBOutlet weak var tableView: UITableView?
@@ -33,6 +39,22 @@ class MemeItemsViewController: UIViewController {
             editModeChanged()
         }
     }
+    
+    private var defaultCount: Int?
+    private var collectionCellCountPerRow: Int {
+        let orientation = UIDevice.currentDevice().orientation
+        switch orientation {
+        case .LandscapeLeft, .LandscapeRight:
+            defaultCount = CollectionCellsPerRowLandscape
+            return CollectionCellsPerRowLandscape
+        case .Portrait:
+            defaultCount = CollectionCellsPerRowPortrait
+            return CollectionCellsPerRowPortrait
+        default:
+            return defaultCount ?? CollectionCellsPerRowPortrait
+        }
+    }
+
     
     // MARK: View Lifecycle
     
@@ -72,11 +94,24 @@ class MemeItemsViewController: UIViewController {
     
     override func viewDidAppear(animated: Bool) {
         // we only want to segue to the editor on first load,
-        // after that we let the use see an empty list
-        // **  to segue from viewDidLoad is not good practice
+        // after that we let the user see an empty list
+        // **  to segue directly from viewDidLoad is reportedly not good practice
         if shouldSegueToEditor {
             shouldSegueToEditor = false
             performSegueWithIdentifier("MemeEditorSegue", sender: self)
+        }
+    }
+    
+    override func viewWillLayoutSubviews() {
+        calculateCollectionCellSize()
+    }
+    
+    // calculates cell size based on cells-per-row for the current device orientation
+    private func calculateCollectionCellSize() {
+        if let collectionView = collectionView {
+            let width = collectionView.frame.width / CGFloat(collectionCellCountPerRow) - CGFloat(CollectionCellSpacing)
+            let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout
+            layout?.itemSize = CGSize(width: width, height: width)
         }
     }
     
@@ -162,7 +197,6 @@ class MemeItemsViewController: UIViewController {
         }
         
     }
-    
     
     // when deselected, call selectionChanged() to handle additional actions
     func handleDeselectionEventForMemeAtIndex(index: Int) {
