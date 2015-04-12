@@ -33,7 +33,7 @@ class SingleMemeViewController: UIViewController {
         // we want to pop the display instead of showing the meme
         if let meme = meme {
             let object = UIApplication.sharedApplication().delegate
-            let appDelegate = object as AppDelegate
+            let appDelegate = object as! AppDelegate
             if !contains(appDelegate.memes, meme) {
                 navigationController?.popViewControllerAnimated(true)
             }
@@ -93,7 +93,7 @@ class SingleMemeViewController: UIViewController {
     
     private func deleteMeme(meme: Meme) {
         let object = UIApplication.sharedApplication().delegate
-        let appDelegate = object as AppDelegate
+        let appDelegate = object as! AppDelegate
         if let index = find(appDelegate.memes, meme) {
             appDelegate.memes.removeAtIndex(index)
         }

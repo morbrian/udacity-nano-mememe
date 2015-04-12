@@ -205,8 +205,9 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     // remember the recently edited text field to allow
     // the keyboard hide event to decide if view needs to shift.
     //
-    func textFieldShouldReturn(textField: UITextField) {
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.endEditing(false)
+        return true
     }
     
     // MARK: UIScrollViewDelegate
@@ -233,7 +234,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     //
     // set picked image and dismiss picker after user chooses image from source.
     //
-    func imagePickerController(picker: UIImagePickerController!, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
         imageView.image = image
         layoutImageView()
         updateModelFromDisplay()
@@ -331,7 +332,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     //
     private func getKeyboardHeight(notification: NSNotification) -> CGFloat {
         let userInfo = notification.userInfo
-        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as NSValue // of CGRect
+        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue // of CGRect
         return keyboardSize.CGRectValue().height
     }
     
@@ -378,7 +379,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
     private func saveMeme() {
         if let meme = self.meme {
             let object = UIApplication.sharedApplication().delegate
-            let appDelegate = object as AppDelegate
+            let appDelegate = object as! AppDelegate
             if let index = find(appDelegate.memes, meme) {
                 appDelegate.memes.replaceRange(index...index, with: [meme])
             } else {

@@ -82,7 +82,7 @@ class MemeItemsViewController: UIViewController {
     
     func deleteSingleMemeAtIndex(index: Int) {
         let object = UIApplication.sharedApplication().delegate
-        let appDelegate = object as AppDelegate
+        let appDelegate = object as! AppDelegate
         appDelegate.memes.removeAtIndex(index)
         memes = appDelegate.memes
         refreshMemesDisplay()
@@ -92,7 +92,7 @@ class MemeItemsViewController: UIViewController {
         var selected = selectedMemes()
         if let newMemes = memes?.filter({ !contains(selected, $0) }) {
             let object = UIApplication.sharedApplication().delegate
-            let appDelegate = object as AppDelegate
+            let appDelegate = object as! AppDelegate
             appDelegate.memes = newMemes
             memes = appDelegate.memes
             disableEditModeAction(self)
@@ -110,7 +110,7 @@ class MemeItemsViewController: UIViewController {
         if let memes = memes {
             if !editMode && index < memes.count {
                 let meme = memes[index]
-                var singleMemeViewer = storyboard?.instantiateViewControllerWithIdentifier("MemeStaticViewer") as SingleMemeViewController
+                var singleMemeViewer = storyboard?.instantiateViewControllerWithIdentifier("MemeStaticViewer") as! SingleMemeViewController
                 singleMemeViewer.meme = meme
                 navigationController?.pushViewController(singleMemeViewer, animated: true)
             } else {
@@ -145,7 +145,7 @@ class MemeItemsViewController: UIViewController {
     
     private func reloadMemesFromSource() {
         let object = UIApplication.sharedApplication().delegate
-        let appDelegate = object as AppDelegate
+        let appDelegate = object as! AppDelegate
         memes = appDelegate.memes
     }
     
