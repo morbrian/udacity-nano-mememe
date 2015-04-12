@@ -47,6 +47,12 @@ class MemeItemsTableViewController: MemeItemsViewController, UITableViewDataSour
         handleDeselectionEventForMemeAtIndex(indexPath.item)
     }
     
+    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        if (editingStyle == UITableViewCellEditingStyle.Delete) {
+            deleteSingleMemeAtIndex(indexPath.item)
+        }
+    }
+    
     // MARK: Implement Abstract Overrides
     
     //

@@ -14,7 +14,6 @@ import UIKit
 //
 class MemeItemsCollectionViewController: MemeItemsViewController, UICollectionViewDataSource, UICollectionViewDelegate {
   
-    
     @IBOutlet weak var collectionView: UICollectionView!
 
     // MARK: UICollectionViewDataSource

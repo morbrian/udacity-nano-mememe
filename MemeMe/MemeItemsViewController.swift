@@ -79,6 +79,14 @@ class MemeItemsViewController: UIViewController {
         navigationItem.rightBarButtonItem = produceAddMemeButton()
         editModeChanged()
     }
+    
+    func deleteSingleMemeAtIndex(index: Int) {
+        let object = UIApplication.sharedApplication().delegate
+        let appDelegate = object as AppDelegate
+        appDelegate.memes.removeAtIndex(index)
+        memes = appDelegate.memes
+        refreshMemesDisplay()
+    }
 
     func deleteSelectedMemesAction(sender: AnyObject!) {
         var selected = selectedMemes()

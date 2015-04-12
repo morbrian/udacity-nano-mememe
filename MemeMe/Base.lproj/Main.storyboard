@@ -452,6 +452,7 @@
                     </view>
                     <connections>
                         <outlet property="imageView" destination="5Iw-sn-Qjt" id="xWl-Wg-Iae"/>
+                        <segue destination="3hl-po-fgb" kind="presentation" identifier="MemeEditorSegue" modalPresentationStyle="fullScreen" modalTransitionStyle="coverVertical" id="TGQ-7l-VCs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Em0-I4-9LI" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -482,6 +483,6 @@
         <image name="checkmark" width="490" height="490"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="E1P-tp-P0o"/>
+        <segue reference="TGQ-7l-VCs"/>
     </inferredMetricsTieBreakers>
 </document>
