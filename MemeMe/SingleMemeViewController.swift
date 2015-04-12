@@ -13,6 +13,7 @@ import UIKit
 // with an ImageView for displayint the memed image.
 // Supports tap gesture which will hide navbar and toolbar for full screen view.
 //
+// MARK: - SingleMemeViewController
 class SingleMemeViewController: UIViewController {
     
     @IBOutlet weak var imageView: UIImageView!
@@ -61,9 +62,7 @@ class SingleMemeViewController: UIViewController {
     
     // MARK: Gestures
     
-    //
     // When a user taps the view, hide the navigation bar and tabbar and animate background color change.
-    //
     func handleTap(sender: UIGestureRecognizer) {
         if sender.state == .Ended {
             if let navBarState = navigationController?.navigationBarHidden {
@@ -87,10 +86,12 @@ class SingleMemeViewController: UIViewController {
         }
     }
     
+    // change background to black (true) or white (false)
     private func toggleBackGroundColor(state: Bool) {
         view.backgroundColor = state ? UIColor.blackColor() : UIColor.whiteColor()
     }
     
+    // delete the meme
     private func deleteMeme(meme: Meme) {
         let object = UIApplication.sharedApplication().delegate
         let appDelegate = object as! AppDelegate

@@ -16,7 +16,7 @@ import UIKit
 // Share button permits user to post the image via device installed apps.
 // Once Share is tapped, even tapping cancel will save the Meme in the list of memes.
 //
-class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIScrollViewDelegate {
+class MemeEditorViewController: UIViewController, UINavigationControllerDelegate {
     
     // MARK: Class Constants
     // FIX: class properties not yet supported in Swift, fix code when Swift supports.
@@ -140,7 +140,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         dismissViewControllerAnimated(true, completion: nil)
     }
     
-    // MARK: UIViewController Basics
+    // MARK: UIViewController Display Handling
     
     //
     // adjust zoom limites after device rotation
@@ -163,84 +163,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         scrollView.bounds.origin = CGPoint(x: upperLeftCornerX, y: upperLeftCornerY)
     }
     
-    // MARK: TextField and Keyboard Handlers
-    
-    //
-    // shift the entire view up if bottom text field being edited
-    //
-    func keyboardWillShow(notification: NSNotification) {
-        if bottomFieldLastEdited {
-            self.view.bounds.origin.y += getKeyboardHeight(notification)
-            toolbar.hidden = true
-        }
-    }
-    
-    //
-    // if bottom textfield just completed editing, shift the view back down
-    //
-    func keyboardWillHide(notification: NSNotification) {
-        if bottomFieldLastEdited {
-            view.bounds.origin.y -= getKeyboardHeight(notification)
-            toolbar.hidden = false
-        }
-    }
-    
-    //
-    // if textfield contains default text, clear text on start editing,
-    // otherwise leave unmodified.
-    //
-    func textFieldDidBeginEditing(textField: UITextField) {
-        bottomFieldLastEdited = textField == bottomTextField
-        let text = textField.text
-        if text == DefaultTop || text == DefaultBottom {
-            textField.text = ""
-        }
-    }
-    
-    func textFieldDidEndEditing(textField: UITextField) {
-        updateModelFromDisplay()
-    }
-    
-    //
-    // remember the recently edited text field to allow
-    // the keyboard hide event to decide if view needs to shift.
-    //
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        textField.endEditing(false)
-        return true
-    }
-    
-    // MARK: UIScrollViewDelegate
-    
-    //
-    // return our imageView as the target view for zoom gestures
-    //
-    func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
-        return imageView
-    }
-    
-    func scrollViewDidZoom(scrollView: UIScrollView) {
-        // while scrolling beyond the limits of the image, we like to keep it centered
-        // so we adjust the insets.
-        let scrollViewSize = scrollView.bounds.size
-        let imageSize = imageView.frame.size
-        let horizontalSpace = imageSize.width < scrollViewSize.width ? (scrollViewSize.width - imageSize.width) / 2 : 0
-        let verticalSpace = imageSize.height < scrollViewSize.height ? (scrollViewSize.height - imageSize.height) / 2 : 0
-        scrollView.contentInset = UIEdgeInsets(top: verticalSpace, left: horizontalSpace, bottom: verticalSpace, right: horizontalSpace)
-    }
-    
-    // MARK: UIImagePickerControllerDelegate
-    
-    //
-    // set picked image and dismiss picker after user chooses image from source.
-    //
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
-        imageView.image = image
-        layoutImageView()
-        updateModelFromDisplay()
-        picker.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
+    // adjust the image size for the current view size
     func layoutImageView() {
         imageView.sizeToFit()
         imageView.frame.origin = CGPoint(x: 0.0, y: 0.0)
@@ -248,20 +171,41 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         setZoomParametersForSize(scrollView.bounds.size)
     }
     
-    // MARK: Private Helpers
+    // MARK: Keyboard Handlers
     
-    //
+    // shift the entire view up if bottom text field being edited
+    func keyboardWillShow(notification: NSNotification) {
+        if bottomFieldLastEdited {
+            self.view.bounds.origin.y += getKeyboardHeight(notification)
+            toolbar.hidden = true
+        }
+    }
+    
+    // if bottom textfield just completed editing, shift the view back down
+    func keyboardWillHide(notification: NSNotification) {
+        if bottomFieldLastEdited {
+            view.bounds.origin.y -= getKeyboardHeight(notification)
+            toolbar.hidden = false
+        }
+    }
+    
+    // return height of displayed keyboard
+    private func getKeyboardHeight(notification: NSNotification) -> CGFloat {
+        let userInfo = notification.userInfo
+        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue // of CGRect
+        return keyboardSize.CGRectValue().height
+    }
+    
+    // MARK: Helpers
+    
     // reset propery display to model values or defaults
-    //
     private func initializeDisplay() {
         topTextField.text = meme?.topText ?? DefaultTop
         bottomTextField.text = meme?.bottomText ?? DefaultBottom
         imageView.image = meme?.image ?? imageView.image
     }
     
-    //
     // modify the display to reflect values stored in model object
-    //
     private func updateDisplayFromModel() {
         if let meme = self.meme {
             topTextField.text = meme.topText
@@ -270,9 +214,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         }
     }
     
-    //
     // modify the model to reflect edits made by user in display
-    //
     private func updateModelFromDisplay() {
         if meme == nil && isMemeCreateable() {
             // explicitly unwrapped imageView.image is verified as not nil by isMemeCreateable
@@ -286,9 +228,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         }
     }
     
-    //
     // set font style, etc.. on textfield text
-    //
     private func configureTextField(textField: UITextField) {
         textField.delegate = self
         // note that assigning the attributes resets the alignment, so it must come first.
@@ -296,9 +236,7 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         textField.textAlignment = NSTextAlignment.Center
     }
     
-    //
     // show the image picker for the requested source type
-    //
     private func pickImageFromSourceType(sourceType: UIImagePickerControllerSourceType) {
         if UIImagePickerController.isSourceTypeAvailable(sourceType) {
             var picker = UIImagePickerController()
@@ -309,12 +247,10 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         }
     }
     
-    //
     // configure zoom scales so that the content is restricted from zooming
     // beyond the point that would allow empty space on any side.
     //
     // Reference: rawwenderlich.com
-    //
     private func setZoomParametersForSize(scrollViewSize: CGSize) {
         let imageSize = imageView.bounds.size
         let widthScale = scrollViewSize.width / imageSize.width
@@ -327,19 +263,8 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         scrollView.zoomScale = minScale
     }
     
-    //
-    // return height of displayed keyboard
-    //
-    private func getKeyboardHeight(notification: NSNotification) -> CGFloat {
-        let userInfo = notification.userInfo
-        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue // of CGRect
-        return keyboardSize.CGRectValue().height
-    }
-    
-    //
     // generate an image from the current view which is expected to be
     // the meme text overlayed on the image backgroud.
-    //
     private func generateMemedImage() -> UIImage {
         let savedNavBarState = navigationController?.navigationBarHidden
         navigationController?.navigationBarHidden = true
@@ -358,24 +283,18 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         return memedImage
     }
     
-    //
     // evalute whether all requirements for meme creation have been met.
     // user must have modified both text fields and have picked an image before a meme can be created
-    //
     private func isMemeCreateable() -> Bool {
         return topTextField.text != DefaultTop && bottomTextField.text != DefaultBottom && imageView.image != nil
     }
     
-    //
     // sharing is enabled if complete meme data is available to create an new image
-    //
     private func isSharingEnabled() -> Bool {
         return meme != nil
     }
     
-    //
     // store the meme model
-    //
     private func saveMeme() {
         if let meme = self.meme {
             let object = UIApplication.sharedApplication().delegate
@@ -389,13 +308,67 @@ class MemeEditorViewController: UIViewController, UITextFieldDelegate, UIImagePi
         }
     }
     
-    //
     // when sharing activity completes save meme then dismiss this editor,
     // returning to previous view on navigation stack.
-    //
     private func completeSharingActivity(String!, Bool, [AnyObject]!, NSError!) {
         saveMeme()
         dismissViewControllerAnimated(true, completion: nil)
     }
     
+}
+
+// MARK: - UIImagePickerControllerDelegate
+extension MemeEditorViewController: UIImagePickerControllerDelegate {
+
+    // set picked image and dismiss picker after user chooses image from source.
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
+        imageView.image = image
+        layoutImageView()
+        updateModelFromDisplay()
+        picker.dismissViewControllerAnimated(true, completion: nil)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension MemeEditorViewController: UITextFieldDelegate {
+
+    // if textfield contains default text, clear text on start editing,
+    // otherwise leave unmodified.
+    func textFieldDidBeginEditing(textField: UITextField) {
+        bottomFieldLastEdited = textField == bottomTextField
+        let text = textField.text
+        if text == DefaultTop || text == DefaultBottom {
+            textField.text = ""
+        }
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField) {
+        updateModelFromDisplay()
+    }
+    
+    // remember the recently edited text field to allow
+    // the keyboard hide event to decide if view needs to shift.
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        textField.endEditing(false)
+        return true
+    }
+}
+
+// MARK: - UIScrollViewDelegate
+extension MemeEditorViewController: UIScrollViewDelegate {
+
+    // return our imageView as the target view for zoom gestures
+    func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView? {
+        return imageView
+    }
+    
+    func scrollViewDidZoom(scrollView: UIScrollView) {
+        // while scrolling beyond the limits of the image, we like to keep it centered
+        // so we adjust the insets.
+        let scrollViewSize = scrollView.bounds.size
+        let imageSize = imageView.frame.size
+        let horizontalSpace = imageSize.width < scrollViewSize.width ? (scrollViewSize.width - imageSize.width) / 2 : 0
+        let verticalSpace = imageSize.height < scrollViewSize.height ? (scrollViewSize.height - imageSize.height) / 2 : 0
+        scrollView.contentInset = UIEdgeInsets(top: verticalSpace, left: horizontalSpace, bottom: verticalSpace, right: horizontalSpace)
+    }
 }

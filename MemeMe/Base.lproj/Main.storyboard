@@ -44,7 +44,7 @@
         <!--Sent Memes-->
         <scene sceneID="Dls-hk-1IJ">
             <objects>
-                <viewController id="SPf-rM-62x" customClass="MemeItemsTableViewController" customModule="MemeMe" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="SPf-rM-62x" customClass="MemeItemsViewController" customModule="MemeMe" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Uxu-MO-gh8"/>
                         <viewControllerLayoutGuide type="bottom" id="emn-7K-u9x"/>
@@ -145,7 +145,7 @@
         <!--Sent Memes-->
         <scene sceneID="opz-zC-wpZ">
             <objects>
-                <viewController id="bDh-1A-dbP" customClass="MemeItemsCollectionViewController" customModule="MemeMe" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="bDh-1A-dbP" customClass="MemeItemsViewController" customModule="MemeMe" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="zrl-9O-lGw"/>
                         <viewControllerLayoutGuide type="bottom" id="b92-QN-RHq"/>
@@ -157,7 +157,7 @@
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="m4M-HY-5dY">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="8" minimumInteritemSpacing="4" id="LSY-Vh-hwh">
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="LSY-Vh-hwh">
                                     <size key="itemSize" width="100" height="100"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -483,6 +483,6 @@
         <image name="checkmark" width="490" height="490"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="TGQ-7l-VCs"/>
+        <segue reference="E1P-tp-P0o"/>
     </inferredMetricsTieBreakers>
 </document>

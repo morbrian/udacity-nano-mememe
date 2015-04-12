@@ -38,13 +38,8 @@ class MemeTableViewCell: UITableViewCell {
     var meme: Meme? {
         didSet {
             if let meme = meme {
-                if let memeImageView = memeImageView {
-                    memeImageView.image = meme.memedImage
-                }
-                if let memeLabel = memeLabel {
-                    memeLabel.text = "\(meme.topText) \(meme.bottomText)"
-                }
-                
+                memeImageView?.image = meme.memedImage
+                memeLabel?.text = "\(meme.topText) \(meme.bottomText)"
             }
         }
     }    
