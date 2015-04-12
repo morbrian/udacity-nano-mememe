@@ -55,7 +55,6 @@ class MemeItemsViewController: UIViewController {
         }
     }
 
-    
     // MARK: View Lifecycle
     
     override func viewDidLoad() {
