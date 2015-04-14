@@ -272,11 +272,6 @@ extension MemeItemsViewController: UITableViewDelegate {
 
     // On row selection, displays the static meme viewer containing the memed image.
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if let cell = tableView.cellForRowAtIndexPath(indexPath) as? MemeTableViewCell {
-            // the selection may have changed the imageview background,
-            // we change it back because we think this makes the table look more balanced.
-            cell.memeImageView?.backgroundColor = cell.originallyConfiguredColor
-        }
         handleSelectionEventForMemeAtIndex(indexPath.item)
     }
     
