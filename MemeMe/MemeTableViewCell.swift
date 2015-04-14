@@ -42,5 +42,19 @@ class MemeTableViewCell: UITableViewCell {
                 memeLabel?.text = "\(meme.topText) \(meme.bottomText)"
             }
         }
-    }    
+    }
+    
+    override func setHighlighted(highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        if highlighted {
+            memeImageView?.backgroundColor = originallyConfiguredColor
+        }
+    }
+    
+    override func setSelected(selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        if selected {
+            memeImageView?.backgroundColor = originallyConfiguredColor
+        }
+    }
 }
