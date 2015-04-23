@@ -330,8 +330,8 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
 extension MemeEditorViewController: UIImagePickerControllerDelegate {
 
     // set picked image and dismiss picker after user chooses image from source.
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage!, editingInfo: [NSObject : AnyObject]!) {
-        if let image = image {
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
+        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
             imageView.image = image
             layoutImageView()
             updateModelFromDisplay()
