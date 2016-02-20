@@ -35,7 +35,7 @@ class SingleMemeViewController: UIViewController {
         if let meme = meme {
             let object = UIApplication.sharedApplication().delegate
             let appDelegate = object as! AppDelegate
-            if !contains(appDelegate.memes, meme) {
+            if !appDelegate.memes.contains(meme) {
                 navigationController?.popViewControllerAnimated(true)
             }
         }
@@ -79,7 +79,7 @@ class SingleMemeViewController: UIViewController {
                 // TODO: this ends up feeling choppy as the UIImageView jumps into position at the end.
                 UIView.transitionWithView(self.view,
                     duration: 0.35,
-                    options: UIViewAnimationOptions.LayoutSubviews | UIViewAnimationOptions.CurveEaseIn,
+                    options: [UIViewAnimationOptions.LayoutSubviews, UIViewAnimationOptions.CurveEaseIn],
                     animations: { tabBarController.tabBar.hidden = !tabBarController.tabBar.hidden },
                     completion: nil)
             }
@@ -95,7 +95,7 @@ class SingleMemeViewController: UIViewController {
     private func deleteMeme(meme: Meme) {
         let object = UIApplication.sharedApplication().delegate
         let appDelegate = object as! AppDelegate
-        if let index = find(appDelegate.memes, meme) {
+        if let index = appDelegate.memes.indexOf(meme) {
             appDelegate.memes.removeAtIndex(index)
         }
     }

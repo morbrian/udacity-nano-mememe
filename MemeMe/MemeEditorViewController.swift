@@ -53,10 +53,9 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         }
     }
     
-    // true if the lasted edited field was the bottom field, 
-    // to help decided if we need to shift view when keyboard appears.
-    private var bottomFieldLastEdited: Bool = false
-    
+    // remember how far we moved the view after the keyboard displays
+    private var viewShiftDistance: CGFloat? = nil
+
     // MARK: View Lifecycle
     
     override func viewDidLoad() {
@@ -71,7 +70,7 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         
         // scroll view will cover entire view, we expect to cover entire device display
         scrollView = UIScrollView(frame: view.bounds)
-        scrollView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
+        scrollView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         
         // imageview is only view contained by scrollview
         scrollView.contentSize = imageView.bounds.size
@@ -84,6 +83,10 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         scrollView.delegate = self
         
         shareButton?.enabled = isSharingEnabled()
+        
+        // let tap cancel editing
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: "handleTap:")
+        view.addGestureRecognizer(tapRecognizer)
         
         // copy model or set default values for user inputs
         initializeDisplay()
@@ -114,15 +117,30 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         return true
     }
     
+    // MARK: Gestures
+    func handleTap(sender: UIGestureRecognizer) {
+        endTextEditing()
+    }
+    
+    func endTextEditing() {
+        topTextField?.endEditing(false)
+        bottomTextField?.endEditing(false)
+    }
+    
     // MARK: User Actions
     
     @IBAction func shareMeme(sender: UIBarButtonItem) {
-        if let var meme = meme {
+        if let meme = meme {
             meme.memedImage = generateMemedImage()
-            meme.scaledAndCroppedImage = generateMemedImage(hideText: true)
+            meme.scaledAndCroppedImage = generateMemedImage(true)
             if let memedImage = meme.memedImage {
-                var activityViewController = UIActivityViewController(activityItems: [memedImage], applicationActivities: nil)
-                activityViewController.completionWithItemsHandler = completeSharingActivity
+                let activityViewController = UIActivityViewController(activityItems: [memedImage], applicationActivities: nil)
+                activityViewController.completionWithItemsHandler = { activityType, completed, returnedItems, activityError in
+                        if completed {
+                            self.saveMeme()
+                            self.dismissViewControllerAnimated(true, completion: nil)
+                        }
+                }
                 presentViewController(activityViewController, animated: true, completion: nil)
             }
         }
@@ -164,7 +182,7 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     func recenterWithScrollViewOrigin() {
         // after views layout, center on the image.
         // this happens after picking an image and after device rotation.
-        var imageViewSize = imageView.bounds.size
+        let imageViewSize = imageView.bounds.size
         let upperLeftCornerX = (imageViewSize.width * scrollView.zoomScale) / 2.0  - scrollView.bounds.size.width / 2.0
         let upperLeftCornerY = (imageViewSize.height * scrollView.zoomScale) / 2.0 - scrollView.bounds.size.height / 2.0
         scrollView.bounds.origin = CGPoint(x: upperLeftCornerX, y: upperLeftCornerY)
@@ -174,16 +192,29 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     
     // shift the entire view up if bottom text field being edited
     func keyboardWillShow(notification: NSNotification) {
-        if bottomFieldLastEdited {
-            self.view.bounds.origin.y += getKeyboardHeight(notification)
+        if bottomTextField.editing {
+            var bottomOfField: CGFloat {
+                let fieldOrigin =  view.convertPoint(bottomTextField.bounds.origin, fromView: bottomTextField)
+                return fieldOrigin.y + bottomTextField.bounds.height
+            }
+            if viewShiftDistance == nil {
+                let keyboardHeight = getKeyboardHeight(notification)
+                let topOfKeyboard = view.bounds.maxY - keyboardHeight
+                // we only need to move the view if the keyboard will cover up the login button and text fields
+                if topOfKeyboard < bottomOfField {
+                    viewShiftDistance = bottomOfField - topOfKeyboard
+                    self.view.bounds.origin.y += viewShiftDistance!
+                }
+            }
             toolbar.hidden = true
         }
     }
     
     // if bottom textfield just completed editing, shift the view back down
     func keyboardWillHide(notification: NSNotification) {
-        if bottomFieldLastEdited {
-            view.bounds.origin.y -= getKeyboardHeight(notification)
+        if let shiftDistance = viewShiftDistance {
+            self.view.bounds.origin.y -= shiftDistance
+            viewShiftDistance = nil
             toolbar.hidden = false
         }
     }
@@ -215,14 +246,17 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     
     // modify the model to reflect edits made by user in display
     private func updateModelFromDisplay() {
-        if meme == nil && isMemeCreateable() {
-            // explicitly unwrapped imageView.image is verified as not nil by isMemeCreateable
-            meme = Meme(topText: topTextField.text, bottomText: bottomTextField.text, image: imageView.image!)
-        } else {
-            meme?.topText = topTextField.text
-            meme?.bottomText = bottomTextField.text
-            if let image = imageView.image {
-                meme?.image = image
+        if let topText = topTextField.text,
+            bottomText = bottomTextField.text {
+            if meme == nil && isMemeCreateable() {
+                // explicitly unwrapped imageView.image is verified as not nil by isMemeCreateable
+                meme = Meme(topText: topText, bottomText: bottomText, image: imageView.image!)
+            } else {
+                meme?.topText = topText
+                meme?.bottomText = bottomText
+                if let image = imageView.image {
+                    meme?.image = image
+                }
             }
         }
     }
@@ -238,7 +272,7 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     // show the image picker for the requested source type
     private func pickImageFromSourceType(sourceType: UIImagePickerControllerSourceType) {
         if UIImagePickerController.isSourceTypeAvailable(sourceType) {
-            var picker = UIImagePickerController()
+            let picker = UIImagePickerController()
             picker.delegate = self
             picker.sourceType = sourceType
             picker.modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
@@ -265,7 +299,6 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
     // generate an image from the current view which is expected to be
     // the meme text overlayed on the image backgroud.
     private func generateMemedImage(hideText: Bool = false) -> UIImage {
-        let savedNavBarState = navigationController?.navigationBarHidden
         navigationController?.navigationBarHidden = true
         
         toolbar.hidden = true
@@ -306,7 +339,7 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         if let meme = self.meme {
             let object = UIApplication.sharedApplication().delegate
             let appDelegate = object as! AppDelegate
-            if let index = find(appDelegate.memes, meme) {
+            if let index = appDelegate.memes.indexOf(meme) {
                 appDelegate.memes.replaceRange(index...index, with: [meme])
             } else {
                 appDelegate.memes.append(meme)
@@ -315,22 +348,14 @@ class MemeEditorViewController: UIViewController, UINavigationControllerDelegate
         }
     }
     
-    // when sharing activity completes save meme then dismiss this editor,
-    // returning to previous view on navigation stack.
-    private func completeSharingActivity(activityType: String!, completed: Bool, returnedItems: [AnyObject]!, activityError: NSError!) {
-        if completed {
-            saveMeme()
-            dismissViewControllerAnimated(true, completion: nil)
-        }
-    }
-    
 }
+
 
 // MARK: - UIImagePickerControllerDelegate
 extension MemeEditorViewController: UIImagePickerControllerDelegate {
 
     // set picked image and dismiss picker after user chooses image from source.
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [NSObject : AnyObject]) {
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
             imageView.image = image
             layoutImageView()
@@ -346,7 +371,6 @@ extension MemeEditorViewController: UITextFieldDelegate {
     // if textfield contains default text, clear text on start editing,
     // otherwise leave unmodified.
     func textFieldDidBeginEditing(textField: UITextField) {
-        bottomFieldLastEdited = textField == bottomTextField
         let text = textField.text
         if text == DefaultTop || text == DefaultBottom {
             textField.text = ""

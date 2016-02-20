@@ -143,8 +143,8 @@ class MemeItemsViewController: UIViewController {
 
     // delete all currently selected memes and update the display
     func deleteSelectedMemesAction(sender: AnyObject!) {
-        var selected = selectedMemes()
-        if let newMemes = memes?.filter({ !contains(selected, $0) }) {
+        let selected = selectedMemes()
+        if let newMemes = memes?.filter({ !selected.contains($0) }) {
             let object = UIApplication.sharedApplication().delegate
             let appDelegate = object as! AppDelegate
             appDelegate.memes = newMemes
@@ -188,7 +188,7 @@ class MemeItemsViewController: UIViewController {
     func handleSelectionEventForMemeAtIndex(index: Int) {
         if let memes = memes where !editMode && index < memes.count {
             let meme = memes[index]
-            var singleMemeViewer = storyboard?.instantiateViewControllerWithIdentifier("MemeStaticViewer") as! SingleMemeViewController
+            let singleMemeViewer = storyboard?.instantiateViewControllerWithIdentifier("MemeStaticViewer") as! SingleMemeViewController
             singleMemeViewer.meme = meme
             navigationController?.pushViewController(singleMemeViewer, animated: true)
         } else {
@@ -247,9 +247,10 @@ class MemeItemsViewController: UIViewController {
         } else if let collectionView = collectionView {
             collectionView.allowsMultipleSelection = editMode
             if (!editMode) {
-                let indexPaths = collectionView.indexPathsForSelectedItems()
-                for indexPath in indexPaths {
-                    collectionView.deselectItemAtIndexPath(indexPath as? NSIndexPath, animated: true)
+                if let indexPaths = collectionView.indexPathsForSelectedItems() {
+                    for indexPath in indexPaths {
+                        collectionView.deselectItemAtIndexPath(indexPath, animated: true)
+                    }
                 }
             }
         }
@@ -257,10 +258,12 @@ class MemeItemsViewController: UIViewController {
     
     // return the list of selected memes
     func selectedMemes() -> [Meme] {
-        if let tableView = tableView {
-            return memesAtPaths(tableView.indexPathsForSelectedRows() as? [NSIndexPath])
-        } else if let collectionView = collectionView {
-            return memesAtPaths(collectionView.indexPathsForSelectedItems() as? [NSIndexPath])
+        if let tableView = tableView,
+            indexPaths = tableView.indexPathsForSelectedRows {
+            return memesAtPaths(indexPaths)
+        } else if let collectionView = collectionView,
+            indexPaths = collectionView.indexPathsForSelectedItems() {
+            return memesAtPaths(indexPaths)
         } else {
             return [Meme]()
         }
@@ -294,7 +297,7 @@ extension MemeItemsViewController: UITableViewDataSource {
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var meme = memes?[indexPath.item]
+        let meme = memes?[indexPath.item]
         let cell = tableView.dequeueReusableCellWithIdentifier("MemeTableItem", forIndexPath: indexPath) as! MemeTableViewCell
         cell.meme = meme
         return cell
